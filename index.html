@@ -151,7 +151,7 @@ themeBtn.onclick = ()=>{
    Generate yours in the browser console:
    crypto.subtle.digest("SHA-256",new TextEncoder().encode("yourpassword"))
      .then(b=>console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join(""))) */
-const PASSWORD_HASH = "PASTE_YOUR_HASH_HERE";
+const PASSWORD_HASH = "f7942759ce88dd1846191f21bc3c972c6218d9bc0269eccb5a889cc72a898914";
 let hash = localStorage.getItem("pwdHash") || null;
 
 async function sha256(text){
