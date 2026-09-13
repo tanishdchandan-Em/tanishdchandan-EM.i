@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Portfolio</title>
+<style>
+  :root {
+    --bg:#0f172a; --text:#e2e8f0; --muted:#94a3b8; --card:#1e293b;
+    --card2:#334155; --accent:#38bdf8; --border:#334155; --input:#0f172a;
+  }
+  html[data-theme="light"] {
+    --bg:#f1f5f9; --text:#1e293b; --muted:#64748b; --card:#ffffff;
+    --card2:#e2e8f0; --accent:#0284c7; --border:#cbd5e1; --input:#ffffff;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+  body { background:var(--bg); color:var(--text); line-height:1.6; transition:background .3s, color .3s; }
+  a { color:var(--accent); }
+  .container { max-width:900px; margin:auto; padding:40px 20px; }
+  header { text-align:center; padding:60px 20px 30px; position:relative; }
+  .avatar { width:120px; height:120px; border-radius:50%; background:var(--card);
+    margin:0 auto 20px; display:flex; align-items:center; justify-content:center;
+    font-size:48px; color:var(--accent); border:3px solid var(--accent); overflow:hidden; }
+  .avatar img { width:100%; height:100%; object-fit:cover; }
+  h1 { font-size:2.5rem; }
+  .tagline { color:var(--muted); font-size:1.1rem; }
+  section { margin:40px 0; }
+  h2 { color:var(--accent); border-bottom:2px solid var(--border); padding-bottom:8px; margin-bottom:16px; }
+  .card { background:var(--card); padding:20px; border-radius:10px; margin-bottom:12px;
+    transition:background .3s; }
+  .skills span { display:inline-block; background:var(--card2); padding:6px 14px;
+    border-radius:20px; margin:4px; }
+  input, textarea { width:100%; background:var(--input); border:1px solid var(--border);
+    color:var(--text); padding:10px; border-radius:6px; margin:4px 0 12px; font-size:1rem; }
+  textarea { min-height:80px; resize:vertical; }
+  button { background:var(--accent); color:var(--bg); border:none; padding:10px 20px;
+    border-radius:6px; font-weight:600; cursor:pointer; margin:4px 4px 0 0; }
+  button:hover { opacity:.85; }
+  .btn-secondary { background:var(--card2); color:var(--text); }
+
+  /* Theme toggle */
+  #themeBtn { position:fixed; top:20px; right:20px; width:44px; height:44px;
+    border-radius:50%; font-size:20px; padding:0; margin:0;
+    background:var(--card); border:1px solid var(--border); z-index:50; }
+
+  #loginBox { position:fixed; inset:0; background:rgba(0,0,0,.6); display:none;
+    align-items:center; justify-content:center; z-index:100; }
+  #loginBox .box { background:var(--card); padding:30px; border-radius:12px; width:320px; }
+  #editBtn { position:fixed; bottom:20px; right:20px; background:var(--card);
+    color:var(--accent); border:1px solid var(--border); opacity:.6; }
+  #saveBar { display:none; text-align:center; padding:15px; background:var(--card);
+    border-radius:10px; margin-top:20px; }
+  .hidden { display:none !important; }
+  footer { text-align:center; color:var(--muted); padding:30px; font-size:.9rem; }
+</style>
+</head>
+<body>
+
+<button id="themeBtn" title="Toggle theme">🌙</button>
+
+<header>
+  <div class="avatar" id="avatar">👤</div>
+  <h1 id="name">Your Name</h1>
+  <p class="tagline" id="tagline">Web Developer & Designer</p>
+</header>
+
+<div class="container">
+  <section>
+    <h2>About Me</h2>
+    <p id="about">Write a short introduction about yourself here.</p>
+  </section>
+
+  <section>
+    <h2>Skills</h2>
+    <div class="skills" id="skills"></div>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+    <div id="projects"></div>
+  </section>
+
+  <section>
+    <h2>Contact</h2>
+    <div class="card">
+      📧 <span id="email">you@example.com</span><br>
+      🔗 <a id="github" href="#">GitHub</a> · <a id="linkedin" href="#">LinkedIn</a>
+    </div>
+  </section>
+</div>
+
+<footer>© <span id="year"></span> <span id="footName">Your Name</span>. All rights reserved.</footer>
+
+<button id="editBtn">✏️</button>
+
+<div id="loginBox">
+  <div class="box">
+    <h3 style="margin-bottom:10px">Owner Login</h3>
+    <input type="password" id="pwd" placeholder="Enter password">
+    <button onclick="login()">Login</button>
+    <button class="btn-secondary" onclick="document.getElementById('loginBox').style.display='none'">Cancel</button>
+    <p id="err" style="color:#f87171;font-size:.85rem"></p>
+  </div>
+</div>
+
+<div id="editor" class="hidden container">
+  <section><h2>Edit Portfolio</h2>
+    <label>Name</label><input id="e_name">
+    <label>Tagline</label><input id="e_tagline">
+    <label>About</label><textarea id="e_about"></textarea>
+    <label>Skills (comma separated)</label><input id="e_skills">
+    <label>Email</label><input id="e_email">
+    <label>GitHub URL</label><input id="e_github">
+    <label>LinkedIn URL</label><input id="e_linkedin">
+    <h3 style="margin:10px 0">Projects</h3>
+    <div id="e_projects"></div>
+    <button onclick="addProjectField()">+ Add Project</button>
+    <button class="btn-secondary" onclick="changePassword()">Change Password</button>
+    <div id="saveBar">
+      <button onclick="save()">💾 Save</button>
+      <button class="btn-secondary" onclick="exitEdit()">Exit without saving</button>
+      <label style="display:block;margin-top:8px;font-size:.85rem">
+        Profile photo: <input type="file" id="photo" accept="image/*">
+      </label>
+    </div>
+  </section>
+</div>
+
+<script>
+/* ================= THEME ================= */
+const themeBtn = document.getElementById("themeBtn");
+
+function applyTheme(theme){
+  document.documentElement.setAttribute("data-theme", theme);
+  themeBtn.textContent = theme === "light" ? "☀️" : "🌙";
+  localStorage.setItem("theme", theme);
+}
+
+// Load saved theme, or follow system preference on first visit
+const savedTheme = localStorage.getItem("theme") ||
+  (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+applyTheme(savedTheme);
+
+themeBtn.onclick = ()=>{
+  const current = document.documentElement.getAttribute("data-theme");
+  applyTheme(current === "light" ? "dark" : "light");
+};
+
+/* ================= PASSWORD SECURITY =================
+   Only a SHA-256 hash is stored — never the password itself.
+   Generate yours in the browser console:
+   crypto.subtle.digest("SHA-256",new TextEncoder().encode("yourpassword"))
+     .then(b=>console.log([...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join(""))) */
+const PASSWORD_HASH = "PASTE_YOUR_HASH_HERE";
+let hash = localStorage.getItem("pwdHash") || null;
+
+async function sha256(text){
+  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+  return [...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+async function login(){
+  const entered = document.getElementById("pwd").value;
+  const h = await sha256(entered);
+  const stored = hash || PASSWORD_HASH;
+  if(h === stored){
+    sessionStorage.setItem("auth","1");
+    document.getElementById("loginBox").style.display="none";
+    enterEdit();
+  } else {
+    document.getElementById("err").textContent="Wrong password.";
+  }
+}
+
+/* ================= DATA ================= */
+const DEFAULTS = {
+  name:"Your Name", tagline:"Web Developer & Designer",
+  about:"Write a short introduction about yourself here.",
+  skills:["HTML","CSS","JavaScript"],
+  projects:[{title:"Project One",desc:"Description here.",link:"#"}],
+  email:"you@example.com", github:"https://github.com", linkedin:"https://linkedin.com",
+  photo:""
+};
+let data = JSON.parse(localStorage.getItem("portfolio")) || {...DEFAULTS};
+
+function render(){
+  document.getElementById("name").textContent=data.name;
+  document.getElementById("footName").textContent=data.name;
+  document.getElementById("tagline").textContent=data.tagline;
+  document.getElementById("about").textContent=data.about;
+  document.getElementById("email").textContent=data.email;
+  document.getElementById("github").href=data.github;
+  document.getElementById("linkedin").href=data.linkedin;
+  document.getElementById("year").textContent=new Date().getFullYear();
+  document.getElementById("skills").innerHTML =
+    data.skills.map(s=>`<span>${s}</span>`).join("");
+  document.getElementById("projects").innerHTML =
+    data.projects.map(p=>`<div class="card"><h3><a href="{p.link||'#'}">{p.title}</a></h3><p>${p.desc}</p></div>`).join("");
+  const av=document.getElementById("avatar");
+  av.innerHTML = data.photo ? `<img src="${data.photo}">` : "👤";
+}
+
+/* ================= EDIT MODE ================= */
+document.getElementById("editBtn").onclick = ()=>{
+  if(sessionStorage.getItem("auth")==="1") enterEdit();
+  else document.getElementById("loginBox").style.display="flex";
+};
+
+function enterEdit(){
+  const E=id=>document.getElementById(id);
+  E("editor").classList.remove("hidden");
+  E("saveBar").style.display="block";
+  E("e_name").value=data.name; E("e_tagline").value=data.tagline;
+  E("e_about").value=data.about; E("e_skills").value=data.skills.join(", ");
+  E("e_email").value=data.email; E("e_github").value=data.github;
+  E("e_linkedin").value=data.linkedin;
+  E("e_projects").innerHTML="";
+  data.projects.forEach(p=>addProjectField(p));
+  E("photo").onchange=e=>{
+    const f=e.target.files[0]; if(!f)return;
+    const r=new FileReader(); r.onload=ev=>data.photo=ev.target.result; r.readAsDataURL(f);
+  };
+  E("editor").scrollIntoView({behavior:"smooth"});
+}
+
+function addProjectField(p={title:"",desc:"",link:""}){
+  const d=document.createElement("div"); d.className="card";
+  d.innerHTML=`<input placeholder="Project title" value="${p.title}" class="pt">
+    <input placeholder="Link" value="${p.link}" class="pl">
+    <textarea placeholder="Description" class="pd">${p.desc}</textarea>`;
+  document.getElementById("e_projects").appendChild(d);
+}
+
+async function save(){
+  const E=id=>document.getElementById(id);
+  data.name=E("e_name").value; data.tagline=E("e_tagline").value;
+  data.about=E("e_about").value;
+  data.skills=E("e_skills").value.split(",").map(s=>s.trim()).filter(Boolean);
+  data.email=E("e_email").value; data.github=E("e_github").value;
+  data.linkedin=E("e_linkedin").value;
+  data.projects=[...document.querySelectorAll("#e_projects .card")].map(c=>({
+    title:c.querySelector(".pt").value, link:c.querySelector(".pl").value,
+    desc:c.querySelector(".pd").value }));
+  localStorage.setItem("portfolio",JSON.stringify(data));
+  render(); exitEdit(); alert("Saved!");
+}
+function exitEdit(){
+  document.getElementById("editor").classList.add("hidden");
+  document.getElementById("saveBar").style.display="none";
+}
+
+async function changePassword(){
+  const np=prompt("Enter new password:");
+  if(!np) return;
+  hash=await sha256(np);
+  localStorage.setItem("pwdHash",hash);
+  alert("Password changed! (Stored as hash only)");
+}
+
+render();
+</script>
+</body>
+</html>
